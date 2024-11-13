@@ -16,6 +16,10 @@ impl TodoManager {
             .filter(|todo| todo.state == state)
             .collect()
     }
+
+    pub fn get_all(&self) -> Vec<&Todo> {
+        self.todos.iter().collect()
+    }
 }
 
 #[derive(PartialEq, Debug)]
@@ -125,6 +129,20 @@ mod test_lib {
                 state: TodoState::InProgress
             }
         );
+    }
+
+    #[test]
+    fn get_all_todos() {
+        let mut manager = TodoManager::default();
+
+        manager.add_todo("Lorem");
+        manager.add_todo("Ipsum");
+        manager.add_todo("Dolor");
+        manager.add_todo("Sit");
+
+        let todos = manager.get_all();
+
+        assert_eq!(todos.len(), 4)
     }
 
     #[test]
