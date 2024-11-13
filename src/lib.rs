@@ -10,15 +10,15 @@ impl TodoManager {
         self.todos.push(Todo::new(self.id_counter, content));
     }
 
+    pub fn get_all(&self) -> Vec<&Todo> {
+        self.todos.iter().collect()
+    }
+
     pub fn get_by_state(&self, state: TodoState) -> Vec<&Todo> {
         self.todos
             .iter()
             .filter(|todo| todo.state == state)
             .collect()
-    }
-
-    pub fn get_all(&self) -> Vec<&Todo> {
-        self.todos.iter().collect()
     }
 }
 
@@ -143,6 +143,26 @@ mod test_lib {
         let todos = manager.get_all();
 
         assert_eq!(todos.len(), 4)
+    }
+
+    #[test]
+    fn get_existing_todo_by_id() {
+        let mut manager = TodoManager::default();
+
+        manager.add_todo("This has id 1");
+        manager.add_todo("This has id 2");
+        manager.add_todo("This has id 3");
+
+        let todo = manager.get_by_id(3);
+
+        assert_eq!(
+            todo,
+            Some(&Todo {
+                id: 3,
+                content: String::from("This has id 3"),
+                state: TodoState::Open
+            })
+        )
     }
 
     #[test]
