@@ -14,6 +14,10 @@ impl TodoManager {
         self.todos.iter().collect()
     }
 
+    pub fn get_by_id(&self, id: usize) -> Option<&Todo> {
+        self.todos.iter().find(|todo| todo.id == id)
+    }
+
     pub fn get_by_state(&self, state: TodoState) -> Vec<&Todo> {
         self.todos
             .iter()
@@ -163,6 +167,15 @@ mod test_lib {
                 state: TodoState::Open
             })
         )
+    }
+
+    #[test]
+    fn try_getting_non_existent_todo_by_id() {
+        let manager = TodoManager::default();
+
+        let todo = manager.get_by_id(42);
+
+        assert_eq!(todo, None)
     }
 
     #[test]
