@@ -56,6 +56,17 @@ impl TodoManager {
             Err(TodoError::NotFound(id))
         }
     }
+
+    pub fn delete_todo(&mut self, id: usize) -> Result<(), TodoError> {
+        let todo_position = self.todos.iter().position(|todo| todo.id == id);
+
+        if let Some(position) = todo_position {
+            self.todos.remove(position);
+            Ok(())
+        } else {
+            Err(TodoError::NotFound(id))
+        }
+    }
 }
 
 #[derive(PartialEq, Debug, Clone, Copy)]
@@ -269,6 +280,25 @@ mod test_lib {
         let mut manager = TodoManager::default();
 
         let result = manager.change_state(42, TodoState::Done);
+        assert_eq!(result, Err(TodoError::NotFound(42)));
+    }
+
+    #[test]
+    fn delete_existing_todo_succeeds() {
+        let mut manager = TodoManager::default();
+        let new_id = manager.add_todo("Lorem Ipsum");
+
+        let result = manager.delete_todo(new_id);
+        assert_eq!(result, Ok(()));
+
+        assert!(manager.todos.is_empty());
+    }
+
+    #[test]
+    fn delete_nonexistent_todo_fails() {
+        let mut manager = TodoManager::default();
+
+        let result = manager.delete_todo(42);
         assert_eq!(result, Err(TodoError::NotFound(42)));
     }
 }
