@@ -5,9 +5,11 @@ pub struct TodoManager {
 }
 
 impl TodoManager {
-    pub fn add_todo(&mut self, content: &str) {
+    pub fn add_todo(&mut self, content: &str) -> usize {
         self.id_counter += 1;
         self.todos.push(Todo::new(self.id_counter, content));
+
+        self.todos.last().unwrap().id
     }
 
     pub fn get_all(&self) -> Vec<&Todo> {
@@ -59,7 +61,7 @@ mod test_lib {
     use super::*;
 
     #[test]
-    fn add_todo() {
+    fn add_todo_adds_todo() {
         let mut manager = TodoManager::default();
 
         let content = "Lorem Ipsum";
@@ -68,6 +70,17 @@ mod test_lib {
         assert_eq!(manager.todos.len(), 1);
         assert_eq!(manager.todos[0].content, content);
         assert_eq!(manager.todos[0].state, TodoState::Open)
+    }
+
+    #[test]
+    fn add_todo_returns_correct_id() {
+        let mut manager = TodoManager::default();
+
+        let new_id = manager.add_todo("content");
+        assert_eq!(new_id, 1);
+
+        let new_id = manager.add_todo("another");
+        assert_eq!(new_id, 2);
     }
 
     #[test]
