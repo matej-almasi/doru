@@ -45,6 +45,17 @@ impl TodoManager {
             Err(TodoError::NotFound(id))
         }
     }
+
+    pub fn change_state(&mut self, id: usize, state: TodoState) -> Result<(), TodoError> {
+        let todo = self.todos.iter_mut().find(|todo| todo.id == id);
+
+        if let Some(todo) = todo {
+            todo.state = state;
+            Ok(())
+        } else {
+            Err(TodoError::NotFound(id))
+        }
+    }
 }
 
 #[derive(PartialEq, Debug, Clone, Copy)]
@@ -237,5 +248,19 @@ mod test_lib {
 
         let result = manager.edit_content(1, "Some content.");
         assert_eq!(result, Err(TodoError::NotFound(1)))
+    }
+
+    #[test]
+    fn change_existing_todo_state() {
+        let mut manager = TodoManager::default();
+        let new_id = manager.add_todo("Good to do.");
+
+        let new_state = TodoState::InProgress;
+
+        let result = manager.change_state(new_id, new_state);
+        assert_eq!(result, Ok(()));
+
+        let updated_state = &manager.get_by_id(new_id).unwrap().state;
+        assert_eq!(*updated_state, new_state);
     }
 }
