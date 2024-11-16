@@ -1,6 +1,6 @@
 use thiserror::Error;
 
-#[derive(Error, Debug)]
+#[derive(Error, Debug, PartialEq)]
 pub enum TodoError {
     #[error("TODO with ID {0} not found!")]
     NotFound(usize),
@@ -33,6 +33,17 @@ impl TodoManager {
             .iter()
             .filter(|todo| todo.state == state)
             .collect()
+    }
+
+    pub fn edit_content(&mut self, id: usize, content: &str) -> Result<(), TodoError> {
+        let todo = self.todos.iter_mut().find(|todo| todo.id == id);
+
+        if let Some(todo) = todo {
+            todo.content = String::from(content);
+            Ok(())
+        } else {
+            Err(TodoError::NotFound(id))
+        }
     }
 }
 
@@ -203,5 +214,28 @@ mod test_lib {
     fn get_id() {
         let todo = Todo::new(42, "Lorem Ipsum");
         assert_eq!(todo.get_id(), 42);
+    }
+
+    #[test]
+    fn edit_existing_todo_content_succeeds() {
+        let mut manager = TodoManager::default();
+
+        let new_id = manager.add_todo("This is a nice TODO.");
+
+        let test_content = "This is even better!";
+        let result = manager.edit_content(new_id, test_content);
+
+        assert_eq!(result, Ok(()));
+
+        let updated_content = &manager.get_by_id(new_id).unwrap().content;
+        assert_eq!(updated_content, test_content)
+    }
+
+    #[test]
+    fn edit_nonexistent_todo_content_fails() {
+        let mut manager = TodoManager::default();
+
+        let result = manager.edit_content(1, "Some content.");
+        assert_eq!(result, Err(TodoError::NotFound(1)))
     }
 }
