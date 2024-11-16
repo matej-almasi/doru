@@ -47,7 +47,7 @@ impl TodoManager {
     }
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone, Copy)]
 pub enum TodoState {
     Open,
     InProgress,
