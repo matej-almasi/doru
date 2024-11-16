@@ -251,7 +251,7 @@ mod test_lib {
     }
 
     #[test]
-    fn change_existing_todo_state() {
+    fn change_existing_todo_state_succeeds() {
         let mut manager = TodoManager::default();
         let new_id = manager.add_todo("Good to do.");
 
@@ -262,5 +262,13 @@ mod test_lib {
 
         let updated_state = &manager.get_by_id(new_id).unwrap().state;
         assert_eq!(*updated_state, new_state);
+    }
+
+    #[test]
+    fn change_nonexistent_todo_state_fails() {
+        let mut manager = TodoManager::default();
+
+        let result = manager.change_state(42, TodoState::Done);
+        assert_eq!(result, Err(TodoError::NotFound(42)));
     }
 }
