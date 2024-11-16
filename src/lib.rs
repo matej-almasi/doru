@@ -1,3 +1,11 @@
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum TodoError {
+    #[error("TODO with ID {0} not found!")]
+    NotFound(usize),
+}
+
 #[derive(Default)]
 pub struct TodoManager {
     id_counter: usize,
