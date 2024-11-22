@@ -1,4 +1,8 @@
-use std::{fs, path::Path};
+use std::{
+    fs::{self, File},
+    io::Write,
+    path::Path,
+};
 
 use crate::Todo;
 
@@ -20,7 +24,20 @@ impl TodoStorage for JsonStorage {
 
         Ok(todos)
     }
-    // fn save(todos: &[crate::Todo], path: &Path) -> Result<(), crate::TodoStorageError> {}
+
+    fn save(todos: &[crate::Todo], path: &Path) -> Result<(), TodoStorageError> {
+        let json = serde_json::to_string(todos).map_err(|_| TodoStorageError::SerializeError)?;
+
+        let mut file = File::options()
+            .write(true)
+            .truncate(true)
+            .open(path)
+            .map_err(|_| TodoStorageError::FileError(path.to_path_buf()))?;
+
+        write!(file, "{json}").map_err(|_| TodoStorageError::FileError(path.to_path_buf()))?;
+
+        Ok(())
+    }
 }
 
 #[cfg(test)]
@@ -78,5 +95,37 @@ mod test {
             parsed_todos,
             Err(TodoStorageError::ParseError(test_file.path().to_path_buf()))
         );
+    }
+
+    #[test]
+    fn saving_to_existing_file_succeeds() {
+        let test_file = NamedTempFile::new().unwrap();
+
+        let todos = vec![
+            Todo::new(0, "Lorem"),
+            Todo::new(1, "Ipsum"),
+            Todo::new(2, "Dolor"),
+        ];
+
+        JsonStorage::save(&todos, test_file.path()).unwrap();
+
+        assert_eq!(
+            fs::read_to_string(test_file.path()).unwrap(),
+            serde_json::to_string(&todos).unwrap()
+        )
+    }
+
+    #[test]
+    fn saving_to_nonexistent_file_fails() {
+        let nonexistent_path = Path::new("nonexistent/path.json");
+
+        let todos = vec![Todo::new(0, "Lorem")];
+
+        let result = JsonStorage::save(&todos, nonexistent_path);
+
+        assert_eq!(
+            result,
+            Err(TodoStorageError::FileError(nonexistent_path.to_path_buf()))
+        )
     }
 }
