@@ -1,13 +1,14 @@
+use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 
-#[derive(PartialEq, Debug, Clone, Copy)]
+#[derive(PartialEq, Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum TodoState {
     Open,
     InProgress,
     Done,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Todo {
     id: usize,
     pub content: String,
