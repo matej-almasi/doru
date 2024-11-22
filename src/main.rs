@@ -1,5 +1,7 @@
+use std::path::Path;
+
 use clap::{Parser, Subcommand};
-use rudo::TodoManager;
+use rudo::{storage, storage::TodoStorage, TodoManager};
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
@@ -20,7 +22,11 @@ enum Commands {
 fn main() {
     let cli = Cli::parse();
 
-    let mut todo_manager = TodoManager::default();
+    let path = Path::new("todos.json");
+
+    let todos = storage::JsonStorage::load(path).unwrap_or_else(|e| panic!("{e}"));
+
+    let mut todo_manager = TodoManager::new(todos);
 
     match cli.command {
         Commands::Add { content } => {
@@ -32,4 +38,7 @@ fn main() {
     for todo in todo_manager.get_all() {
         println!("{todo}");
     }
+
+    storage::JsonStorage::save(&todo_manager.get_all(), path)
+        .expect("Something went wrong saving the todos.");
 }
