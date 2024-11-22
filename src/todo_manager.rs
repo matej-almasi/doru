@@ -9,6 +9,15 @@ pub struct TodoManager {
 }
 
 impl TodoManager {
+    pub fn new(todos: Vec<Todo>) -> Self {
+        let last_id = todos.iter().map(|todo| todo.get_id()).max().unwrap_or(0);
+
+        Self {
+            id_counter: last_id,
+            todos,
+        }
+    }
+
     pub fn add_todo(&mut self, content: &str) -> usize {
         self.id_counter += 1;
         self.todos.push(Todo::new(self.id_counter, content));
@@ -68,6 +77,42 @@ impl TodoManager {
 #[cfg(test)]
 mod test {
     use super::*;
+
+    #[test]
+    fn new_from_empty_vec_is_empty() {
+        let manager = TodoManager::new(vec![]);
+
+        assert_eq!(manager.todos, vec![]);
+    }
+
+    #[test]
+    fn new_from_empty_has_last_counter_0() {
+        let manager = TodoManager::new(vec![]);
+
+        assert_eq!(manager.id_counter, 0);
+    }
+
+    #[test]
+    fn new_from_existing_is_filled() {
+        let todos = vec![Todo::new(0, "Lorem"), Todo::new(1, "Ipsum")];
+
+        let manager = TodoManager::new(todos.clone());
+
+        assert_eq!(manager.todos, todos);
+    }
+
+    #[test]
+    fn new_from_existing_has_correct_id_counter() {
+        let todos = vec![
+            Todo::new(0, "Lorem"),
+            Todo::new(10, "Ipsum"),
+            Todo::new(2, "Dolor"),
+        ];
+
+        let manager = TodoManager::new(todos.clone());
+
+        assert_eq!(manager.id_counter, 10);
+    }
 
     #[test]
     fn add_todo_adds_todo() {
