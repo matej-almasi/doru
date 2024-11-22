@@ -25,7 +25,7 @@ impl TodoStorage for JsonStorage {
         Ok(todos)
     }
 
-    fn save(todos: &[crate::Todo], path: &Path) -> Result<(), TodoStorageError> {
+    fn save(todos: &[&crate::Todo], path: &Path) -> Result<(), TodoStorageError> {
         let json = serde_json::to_string(todos).map_err(|_| TodoStorageError::SerializeError)?;
 
         let mut file = File::options()
@@ -107,7 +107,9 @@ mod test {
             Todo::new(2, "Dolor"),
         ];
 
-        JsonStorage::save(&todos, test_file.path()).unwrap();
+        let referenced_todos: Vec<&Todo> = todos.iter().collect();
+
+        JsonStorage::save(&referenced_todos, test_file.path()).unwrap();
 
         assert_eq!(
             fs::read_to_string(test_file.path()).unwrap(),
@@ -119,9 +121,11 @@ mod test {
     fn saving_to_nonexistent_file_fails() {
         let nonexistent_path = Path::new("nonexistent/path.json");
 
-        let todos = vec![Todo::new(0, "Lorem")];
+        let todos = [Todo::new(0, "Lorem")];
 
-        let result = JsonStorage::save(&todos, nonexistent_path);
+        let referenced_todos: Vec<&Todo> = todos.iter().collect();
+
+        let result = JsonStorage::save(&referenced_todos, nonexistent_path);
 
         assert_eq!(
             result,
