@@ -53,4 +53,17 @@ mod test {
             Err(TodoStorageError::FileError(nonexistent_path.to_path_buf()))
         )
     }
+
+    #[test]
+    fn parse_invalid_json_fails() {
+        let mut test_file = NamedTempFile::new().unwrap();
+        writeln!(test_file, "Lorem ipsum not a todo list json").unwrap();
+
+        let parsed_todos = JsonStorage::load(test_file.path());
+
+        assert_eq!(
+            parsed_todos,
+            Err(TodoStorageError::ParseError(test_file.path().to_path_buf()))
+        );
+    }
 }
