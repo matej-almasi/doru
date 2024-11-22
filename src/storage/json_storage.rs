@@ -11,6 +11,10 @@ impl TodoStorage for JsonStorage {
         let json = fs::read_to_string(path)
             .map_err(|_| TodoStorageError::FileError(path.to_path_buf()))?;
 
+        if json.trim().is_empty() {
+            return Ok(vec![]);
+        }
+
         let todos: Vec<Todo> = serde_json::from_str(&json)
             .map_err(|_| TodoStorageError::ParseError(path.to_path_buf()))?;
 
@@ -42,6 +46,15 @@ mod test {
         let parsed_todos = JsonStorage::load(test_file.path()).unwrap();
 
         assert_eq!(parsed_todos, todos);
+    }
+
+    #[test]
+    fn read_empty_file_returns_empty_vector() {
+        let test_file = NamedTempFile::new().unwrap();
+
+        let parsed_todos = JsonStorage::load(test_file.path()).unwrap();
+
+        assert_eq!(parsed_todos, vec![]);
     }
 
     #[test]
