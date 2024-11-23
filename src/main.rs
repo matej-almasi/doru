@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::{env, error::Error, fs, path::Path, path::PathBuf};
 
 use clap::{Parser, Subcommand};
 use rudo::{storage, storage::TodoStorage, TodoManager};
@@ -22,9 +22,11 @@ enum Commands {
 fn main() {
     let cli = Cli::parse();
 
-    let path = Path::new("todos.json");
+    let path = get_todos_path().unwrap_or_else(|e| panic!("{e}"));
 
-    let todos = storage::JsonStorage::load(path).unwrap_or_else(|e| panic!("{e}"));
+    ensure_storage_exists(&path).expect("Failed reaching storage path.");
+
+    let todos = storage::JsonStorage::load(&path).unwrap_or_else(|e| panic!("{e}"));
 
     let mut todo_manager = TodoManager::new(todos);
 
@@ -39,6 +41,27 @@ fn main() {
         println!("{todo}");
     }
 
-    storage::JsonStorage::save(&todo_manager.get_all(), path)
-        .expect("Something went wrong saving the todos.");
+    storage::JsonStorage::save(&todo_manager.get_all(), &path).unwrap_or_else(|e| panic!("{e}"));
+}
+
+fn get_todos_path() -> Result<PathBuf, Box<dyn Error>> {
+    if let Ok(env_path) = env::var("RUDO_PATH") {
+        Ok(PathBuf::from(env_path))
+    } else if let Some(home_dir) = dirs::home_dir() {
+        Ok(home_dir.join(".rudo").join("todos.json"))
+    } else {
+        Err("Unable to determine home directory".into())
+    }
+}
+
+fn ensure_storage_exists(path: &Path) -> std::io::Result<()> {
+    if !path.exists() {
+        if let Some(parent) = path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+
+        fs::File::create(path)?;
+    }
+
+    Ok(())
 }
