@@ -8,6 +8,9 @@ use rudo::{storage, storage::TodoStorage, TodoManager};
 struct Cli {
     #[command(subcommand)]
     command: Commands,
+
+    #[arg(short, long, global = true)]
+    path: Option<String>,
 }
 
 #[derive(Subcommand)]
@@ -22,7 +25,10 @@ enum Commands {
 fn main() {
     let cli = Cli::parse();
 
-    let path = get_todos_path().unwrap_or_else(|e| panic!("{e}"));
+    let path = match cli.path {
+        Some(value) => PathBuf::from(value),
+        None => get_todos_path().unwrap_or_else(|e| panic!("{e}")),
+    };
 
     ensure_storage_exists(&path).expect("Failed reaching storage path.");
 
