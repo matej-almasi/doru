@@ -33,10 +33,10 @@ impl TodoManager {
         self.todos.iter().find(|todo| todo.get_id() == id)
     }
 
-    pub fn get_by_status(&self, state: TodoStatus) -> Vec<&Todo> {
+    pub fn get_by_status(&self, status: TodoStatus) -> Vec<&Todo> {
         self.todos
             .iter()
-            .filter(|todo| todo.status == state)
+            .filter(|todo| todo.status == status)
             .collect()
     }
 
