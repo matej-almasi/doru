@@ -21,7 +21,7 @@ struct Cli {
 enum Commands {
     Add { content: String },
     Edit { id: usize, content: String },
-    List,
+    List { status: Option<TodoStatus> },
     Status { id: usize, status: TodoStatus },
     Delete { id: usize },
 }
@@ -49,8 +49,14 @@ fn main() {
             .edit_content(id, &content)
             .unwrap_or_else(|e| println!("{e}")),
 
-        Commands::List => {
-            for todo in todo_manager.get_all() {
+        Commands::List { status } => {
+            let todos = if let Some(value) = status {
+                todo_manager.get_by_status(value)
+            } else {
+                todo_manager.get_all()
+            };
+
+            for todo in todos {
                 println!("{todo}");
             }
         }
