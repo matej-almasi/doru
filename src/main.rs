@@ -1,7 +1,11 @@
 use std::{env, error::Error, fs, path::Path, path::PathBuf};
 
 use clap::{Parser, Subcommand};
-use rudo::{storage, storage::TodoStorage, TodoManager};
+use rudo::{
+    storage::{self, TodoStorage},
+    todo::TodoState,
+    TodoManager,
+};
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
@@ -18,7 +22,7 @@ enum Commands {
     Add { content: String },
     Edit { id: usize, content: String },
     List,
-    // Status { id: usize, status: String },
+    Status { id: usize, status: TodoState },
     // Delete { id: usize },
 }
 
@@ -51,6 +55,12 @@ fn main() {
             for todo in todo_manager.get_all() {
                 println!("{todo}");
             }
+        }
+
+        Commands::Status { id, status } => {
+            todo_manager
+                .change_state(id, status)
+                .unwrap_or_else(|e| println!("{e}"));
         }
     }
 

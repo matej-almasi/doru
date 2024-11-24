@@ -1,7 +1,8 @@
+use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 
-#[derive(PartialEq, Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Copy, Serialize, Deserialize, ValueEnum)]
 pub enum TodoState {
     Open,
     InProgress,

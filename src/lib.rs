@@ -1,5 +1,5 @@
 pub mod storage;
-mod todo;
+pub mod todo;
 mod todo_manager;
 
 use thiserror::Error;
