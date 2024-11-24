@@ -17,7 +17,7 @@ struct Cli {
 enum Commands {
     Add { content: String },
     Edit { id: usize, content: String },
-    // List,
+    List,
     // Status { id: usize, status: String },
     // Delete { id: usize },
 }
@@ -46,11 +46,12 @@ fn main() {
                 .edit_content(id, &content)
                 .unwrap_or_else(|e| println!("{e}"));
         }
-    }
 
-    // temporary: list all todos after command is executed
-    for todo in todo_manager.get_all() {
-        println!("{todo}");
+        Commands::List => {
+            for todo in todo_manager.get_all() {
+                println!("{todo}");
+            }
+        }
     }
 
     storage::JsonStorage::save(&todo_manager.get_all(), &path).unwrap_or_else(|e| panic!("{e}"));
