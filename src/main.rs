@@ -23,7 +23,7 @@ enum Commands {
     Edit { id: usize, content: String },
     List,
     Status { id: usize, status: TodoState },
-    // Delete { id: usize },
+    Delete { id: usize },
 }
 
 fn main() {
@@ -62,6 +62,10 @@ fn main() {
                 .change_state(id, status)
                 .unwrap_or_else(|e| println!("{e}"));
         }
+
+        Commands::Delete { id } => todo_manager
+            .delete_todo(id)
+            .unwrap_or_else(|e| println!("{e}")),
     }
 
     storage::JsonStorage::save(&todo_manager.get_all(), &path).unwrap_or_else(|e| panic!("{e}"));
