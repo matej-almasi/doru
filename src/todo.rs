@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 
 #[derive(PartialEq, Debug, Clone, Copy, Serialize, Deserialize, ValueEnum)]
-pub enum TodoState {
+pub enum TodoStatus {
     Open,
     InProgress,
     Done,
@@ -13,7 +13,7 @@ pub enum TodoState {
 pub struct Todo {
     id: usize,
     pub content: String,
-    pub state: TodoState,
+    pub status: TodoStatus,
 }
 
 impl Todo {
@@ -21,7 +21,7 @@ impl Todo {
         Self {
             id,
             content: String::from(content),
-            state: TodoState::Open,
+            status: TodoStatus::Open,
         }
     }
 
@@ -32,7 +32,7 @@ impl Todo {
 
 impl Display for Todo {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let tick = if self.state == TodoState::Done {
+        let tick = if self.status == TodoStatus::Done {
             "x"
         } else {
             " "
@@ -41,7 +41,7 @@ impl Display for Todo {
         write!(
             f,
             "[{}] {:<20} [{:<12?}] (ID: {})",
-            tick, self.content, self.state, self.id
+            tick, self.content, self.status, self.id
         )
     }
 }

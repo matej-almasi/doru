@@ -1,5 +1,5 @@
 use crate::todo::Todo;
-use crate::todo::TodoState;
+use crate::todo::TodoStatus;
 use crate::TodoError;
 
 #[derive(Default)]
@@ -33,10 +33,10 @@ impl TodoManager {
         self.todos.iter().find(|todo| todo.get_id() == id)
     }
 
-    pub fn get_by_state(&self, state: TodoState) -> Vec<&Todo> {
+    pub fn get_by_status(&self, state: TodoStatus) -> Vec<&Todo> {
         self.todos
             .iter()
-            .filter(|todo| todo.state == state)
+            .filter(|todo| todo.status == state)
             .collect()
     }
 
@@ -51,11 +51,11 @@ impl TodoManager {
         }
     }
 
-    pub fn change_state(&mut self, id: usize, state: TodoState) -> Result<(), TodoError> {
+    pub fn change_status(&mut self, id: usize, state: TodoStatus) -> Result<(), TodoError> {
         let todo = self.todos.iter_mut().find(|todo| todo.get_id() == id);
 
         if let Some(todo) = todo {
-            todo.state = state;
+            todo.status = state;
             Ok(())
         } else {
             Err(TodoError::NotFound(id))
@@ -123,7 +123,7 @@ mod test {
 
         assert_eq!(manager.todos.len(), 1);
         assert_eq!(manager.todos[0].content, content);
-        assert_eq!(manager.todos[0].state, TodoState::Open)
+        assert_eq!(manager.todos[0].status, TodoStatus::Open)
     }
 
     #[test]
@@ -154,9 +154,9 @@ mod test {
         manager.add_todo("Ipsum");
         manager.add_todo("Dolor");
 
-        manager.todos[2].state = TodoState::InProgress;
+        manager.todos[2].status = TodoStatus::InProgress;
 
-        let open_todos = manager.get_by_state(TodoState::Open);
+        let open_todos = manager.get_by_status(TodoStatus::Open);
 
         assert_eq!(open_todos.len(), 2);
 
@@ -170,9 +170,9 @@ mod test {
         manager.add_todo("Ipsum");
         manager.add_todo("Dolor");
 
-        manager.todos[1].state = TodoState::InProgress;
+        manager.todos[1].status = TodoStatus::InProgress;
 
-        let in_progress = manager.get_by_state(TodoState::InProgress);
+        let in_progress = manager.get_by_status(TodoStatus::InProgress);
 
         assert_eq!(in_progress.len(), 1);
 
@@ -239,24 +239,24 @@ mod test {
     }
 
     #[test]
-    fn change_existing_todo_state_succeeds() {
+    fn change_existing_todo_status_succeeds() {
         let mut manager = TodoManager::default();
         let new_id = manager.add_todo("Good to do.");
 
-        let new_state = TodoState::InProgress;
+        let new_state = TodoStatus::InProgress;
 
-        let result = manager.change_state(new_id, new_state);
+        let result = manager.change_status(new_id, new_state);
         assert_eq!(result, Ok(()));
 
-        let updated_state = &manager.get_by_id(new_id).unwrap().state;
+        let updated_state = &manager.get_by_id(new_id).unwrap().status;
         assert_eq!(*updated_state, new_state);
     }
 
     #[test]
-    fn change_nonexistent_todo_state_fails() {
+    fn change_nonexistent_todo_status_fails() {
         let mut manager = TodoManager::default();
 
-        let result = manager.change_state(42, TodoState::Done);
+        let result = manager.change_status(42, TodoStatus::Done);
         assert_eq!(result, Err(TodoError::NotFound(42)));
     }
 
