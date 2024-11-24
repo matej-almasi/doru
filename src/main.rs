@@ -16,7 +16,7 @@ struct Cli {
 #[derive(Subcommand)]
 enum Commands {
     Add { content: String },
-    // Edit { id: usize, content: String },
+    Edit { id: usize, content: String },
     // List,
     // Status { id: usize, status: String },
     // Delete { id: usize },
@@ -39,6 +39,12 @@ fn main() {
     match cli.command {
         Commands::Add { content } => {
             todo_manager.add_todo(&content);
+        }
+
+        Commands::Edit { id, content } => {
+            todo_manager
+                .edit_content(id, &content)
+                .unwrap_or_else(|e| println!("{e}"));
         }
     }
 
