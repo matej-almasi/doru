@@ -45,11 +45,9 @@ fn main() {
             todo_manager.add_todo(&content);
         }
 
-        Commands::Edit { id, content } => {
-            todo_manager
-                .edit_content(id, &content)
-                .unwrap_or_else(|e| println!("{e}"));
-        }
+        Commands::Edit { id, content } => todo_manager
+            .edit_content(id, &content)
+            .unwrap_or_else(|e| println!("{e}")),
 
         Commands::List => {
             for todo in todo_manager.get_all() {
@@ -57,11 +55,9 @@ fn main() {
             }
         }
 
-        Commands::Status { id, status } => {
-            todo_manager
-                .change_state(id, status)
-                .unwrap_or_else(|e| println!("{e}"));
-        }
+        Commands::Status { id, status } => todo_manager
+            .change_state(id, status)
+            .unwrap_or_else(|e| println!("{e}")),
 
         Commands::Delete { id } => todo_manager
             .delete_todo(id)
