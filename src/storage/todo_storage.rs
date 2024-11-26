@@ -2,7 +2,7 @@ use std::path::{Path, PathBuf};
 
 use thiserror::Error;
 
-use crate::Todo;
+use crate::todo::Todo;
 
 pub trait TodoStorage {
     fn load(path: &Path) -> Result<Vec<Todo>, TodoStorageError>;

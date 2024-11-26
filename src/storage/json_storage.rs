@@ -4,7 +4,7 @@ use std::{
     path::Path,
 };
 
-use crate::Todo;
+use crate::todo::Todo;
 
 use super::{TodoStorage, TodoStorageError};
 
@@ -25,7 +25,7 @@ impl TodoStorage for JsonStorage {
         Ok(todos)
     }
 
-    fn save(todos: &[&crate::Todo], path: &Path) -> Result<(), TodoStorageError> {
+    fn save(todos: &[&Todo], path: &Path) -> Result<(), TodoStorageError> {
         let json = serde_json::to_string(todos).map_err(|_| TodoStorageError::SerializeError)?;
 
         let mut file = File::options()

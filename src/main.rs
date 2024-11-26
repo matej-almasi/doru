@@ -7,7 +7,7 @@ use clap::{Parser, Subcommand};
 use rudo::{
     storage::{self, TodoStorage},
     todo::TodoStatus,
-    TodoManager,
+    todo_manager::TodoManager,
 };
 
 /// CLI structure for the `rudo` application.

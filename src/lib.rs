@@ -1,11 +1,8 @@
 pub mod storage;
 pub mod todo;
-mod todo_manager;
+pub mod todo_manager;
 
 use thiserror::Error;
-
-pub use todo::Todo;
-pub use todo_manager::TodoManager;
 
 #[derive(Error, Debug, PartialEq)]
 pub enum TodoError {
