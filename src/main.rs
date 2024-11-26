@@ -1,5 +1,6 @@
-//! Entry point for the `rudo` application, serving as an example use of the rudo library.
-//! It defines the command-line interface (CLI) and handles the execution of commands.
+//! Entry point for the `rudo` application, serving as an example use of the
+//! rudo library. It defines the command-line interface (CLI) and handles the
+//! execution of commands.
 
 use std::{env, error::Error, fs, path::Path, path::PathBuf};
 
@@ -92,8 +93,8 @@ fn main() {
 
 /// Get the path to the todos file.
 ///
-/// This function checks the `RUDO_PATH` environment variable. If not set, it defaults to
-/// `~/.rudo/todos.json`.
+/// This function checks the `RUDO_PATH` environment variable. If not set, it
+/// defaults to `~/.rudo/todos.json`.
 ///
 /// # Errors
 ///
@@ -110,7 +111,8 @@ fn get_todos_path() -> Result<PathBuf, Box<dyn Error>> {
 
 /// Ensure that the storage file exists.
 ///
-/// This function creates the necessary directories and file if they do not exist.
+/// This function creates the necessary directories and file if they do not
+/// exist.
 ///
 /// # Errors
 ///
