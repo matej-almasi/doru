@@ -1,3 +1,6 @@
+//! Entry point for the `rudo` application, serving as an example use of the rudo library.
+//! It defines the command-line interface (CLI) and handles the execution of commands.
+
 use std::{env, error::Error, fs, path::Path, path::PathBuf};
 
 use clap::{Parser, Subcommand};
@@ -7,25 +10,39 @@ use rudo::{
     TodoManager,
 };
 
+/// CLI structure for the `rudo` application.
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
 struct Cli {
+    /// The command to execute.
     #[command(subcommand)]
     command: Commands,
 
+    /// Optional path to the todos file.
     #[arg(short, long, global = true)]
     path: Option<String>,
 }
 
+/// Available commands for the `rudo` application.
 #[derive(Subcommand)]
 enum Commands {
+    /// Add a new TODO item.
     Add { content: String },
+
+    /// Edit the content of an existing TODO item.
     Edit { id: usize, content: String },
+
+    /// List TODO items, optionally filtered by status.
     List { status: Option<TodoStatus> },
+
+    /// Change the status of an existing TODO item.
     Status { id: usize, status: TodoStatus },
+
+    /// Delete an existing TODO item.
     Delete { id: usize },
 }
 
+/// Main entry point for the `rudo` application.
 fn main() {
     let cli = Cli::parse();
 
@@ -73,6 +90,14 @@ fn main() {
     storage::JsonStorage::save(&todo_manager.get_all(), &path).unwrap_or_else(|e| panic!("{e}"));
 }
 
+/// Get the path to the todos file.
+///
+/// This function checks the `RUDO_PATH` environment variable. If not set, it defaults to
+/// `~/.rudo/todos.json`.
+///
+/// # Errors
+///
+/// Returns an error if the user's home directory cannot be determined.
 fn get_todos_path() -> Result<PathBuf, Box<dyn Error>> {
     if let Ok(env_path) = env::var("RUDO_PATH") {
         Ok(PathBuf::from(env_path))
@@ -83,6 +108,13 @@ fn get_todos_path() -> Result<PathBuf, Box<dyn Error>> {
     }
 }
 
+/// Ensure that the storage file exists.
+///
+/// This function creates the necessary directories and file if they do not exist.
+///
+/// # Errors
+///
+/// Returns an error if the directories or file cannot be created.
 fn ensure_storage_exists(path: &Path) -> std::io::Result<()> {
     if !path.exists() {
         if let Some(parent) = path.parent() {
