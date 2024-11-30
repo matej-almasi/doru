@@ -1,7 +1,30 @@
+//! A simple Todo item.
+//!
+//! This module contains the `Todo` type and the `TodoStatus` enum representing
+//! lifecycle of a `Todo`.
+//!
+//! # Examples
+//!
+//! ```
+//! use rudo::todo::{Todo, TodoStatus};
+//!
+//! // Create a new Todo item
+//! let mut todo = Todo::new(1, "Write module level documentation");
+//!
+//! assert_eq!(todo.content, "Write module level documentation");
+//! assert_eq!(todo.status, TodoStatus::Open);
+//!
+//! // Change the status of the Todo item
+//! todo.status = TodoStatus::InProgress;
+//!
+//! assert_eq!(todo.status, TodoStatus::InProgress);
+//! ```
+
 use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 
+/// Status of a Todo item.
 #[derive(PartialEq, Debug, Clone, Copy, Serialize, Deserialize, ValueEnum)]
 pub enum TodoStatus {
     Open,
@@ -9,6 +32,7 @@ pub enum TodoStatus {
     Done,
 }
 
+/// A Todo item.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Todo {
     id: usize,
@@ -17,6 +41,10 @@ pub struct Todo {
 }
 
 impl Todo {
+    /// Creates a new `Todo` with the given id and content.
+    ///
+    /// The created `Todo` item starts with a default
+    /// [`Open`](TodoStatus::Open) [`TodoStatus`].
     pub fn new(id: usize, content: &str) -> Self {
         Self {
             id,
@@ -25,6 +53,7 @@ impl Todo {
         }
     }
 
+    /// Returns this `Todo`'s id.
     pub fn get_id(&self) -> usize {
         self.id
     }
@@ -38,6 +67,7 @@ impl Display for Todo {
             " "
         };
 
+        // Example format: "[x] Learn Rust [Done] (ID: 42)"
         write!(
             f,
             "[{}] {:<20} [{:<12?}] (ID: {})",
