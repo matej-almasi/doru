@@ -1,12 +1,15 @@
 //! # Rudo
 //!
-//! Rudo is a simple library providing basic TODO functionality. In its heart is
-//! a TODO Manager that manages a vector of TODOs - any interaction with
-//! individual TODOs is handled by the Manager.
+//! Rudo is a simple library providing basic `Todo` functionality. In its heart
+//! is a `TodoManager` that manages a vector of `Todo`s - any interaction with
+//! individual `Todo`s is handled by the Manager.
 //!
-//! Additionally, a TODO Storage trait is provided, defining the contract
-//! necessary for loading and storing TODOs from arbitrary source. An example
-//! JSON storage implementing the trait is provided.
+//! Additionally, a `TodoStorage` trait defines the contract for loading and
+//! storing `Todo`s from/ to arbitrary text format. An example JSON storage
+//! implementing the trait is provided.
+//!
+//! In some cases, the operations can fail. The `TodoError` enum defines the
+//! possible errors.
 //!
 //! # Example
 //!
@@ -26,21 +29,18 @@
 //! }
 //! ```
 
-/// Storage of TODO items.
 pub mod storage;
 
-/// TODO item structure and related enums.
 pub mod todo;
 
-/// TODO manager managing interaction with a collection of TODOs.
 pub mod todo_manager;
 
 use thiserror::Error;
 
-/// Enum representing possible errors that can occur while managing TODO items.
+/// Possible errors that can occur while managing Todo items.
 #[derive(Error, Debug, PartialEq)]
 pub enum TodoError {
-    /// Error indicating that a TODO item with the specified ID was not found.
-    #[error("TODO with ID {0} not found!")]
+    /// Error indicating that a Todo item with the specified ID was not found.
+    #[error("Todo with ID {0} not found!")]
     NotFound(usize),
 }
