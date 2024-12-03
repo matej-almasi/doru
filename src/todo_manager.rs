@@ -1,7 +1,92 @@
+//! A `TodoManager`, responsible for managing interaction with a collection of
+//! [`Todo`]s.
+//!
+//! This module contains the [`TodoManager`] type, providing methods for adding,
+//! retrieving and modifying [`Todo`]s in a collection.
+//!
+//! # Examples
+//!
+//! ```
+//! # fn main() -> Result<(), rudo::TodoError> {
+//! use rudo::todo::TodoStatus;
+//! use rudo::todo_manager::TodoManager;
+//!
+//! // Create a new TodoManager.
+//! let mut manager = TodoManager::default();
+//!
+//! // Add a new Todo and store its ID.
+//! let id = manager.add_todo("Learn to program");
+//! assert_eq!(manager.get_by_id(id).unwrap().content, "Learn to program");
+//!
+//! // Change the status of the Todo to InProgress.
+//! manager.change_status(id, TodoStatus::InProgress)?;
+//! assert_eq!(
+//!     manager.get_by_id(id).unwrap().status,
+//!     TodoStatus::InProgress
+//! );
+//!
+//! // Add another Todo and retrieve all Todos.
+//! manager.add_todo("Learn Rust");
+//! let todos = manager.get_all();
+//! assert_eq!(todos.len(), 2);
+//!
+//! // Edit the content of the first Todo.
+//! manager.edit_content(id, "Learn to program like a Rustacean")?;
+//! assert_eq!(
+//!     manager.get_by_id(id).unwrap().content,
+//!     "Learn to program like a Rustacean"
+//! );
+//!
+//! // Delete the first Todo.
+//! manager.delete_todo(id)?;
+//! assert!(manager.get_by_id(id).is_none());
+//! # Ok(())
+//! # }
+//! ```
+
 use crate::todo::Todo;
 use crate::todo::TodoStatus;
 use crate::TodoError;
 
+/// A `TodoManager`, responsible for managing interaction with a collection of
+/// [`Todo`]s.
+///
+/// This type provides methods for adding, retrieving and modifying [`Todo`]s in
+/// a collection held by the `TodoManager`.
+///
+/// # Examples
+///
+/// Create a default `TodoManager` with an empty collection of Todos:
+/// ```
+/// let mut manager = rudo::todo_manager::TodoManager::default();
+/// ```
+///
+/// Add a new Todo to the manager:
+/// ```
+/// # let mut manager = rudo::todo_manager::TodoManager::default();
+/// let id = manager.add_todo("Learn Rust");
+/// ```
+///
+/// Change status of the Todo:
+/// ```
+/// # let mut manager = rudo::todo_manager::TodoManager::default();
+/// # let id = manager.add_todo("Learn Rust");
+/// manager.change_status(id, rudo::todo::TodoStatus::InProgress);
+/// ```
+///
+/// Edit the Todo's content:
+/// ```
+/// # let mut manager = rudo::todo_manager::TodoManager::default();
+/// # let id = manager.add_todo("Learn Rust");
+/// manager.edit_content(id, "Learn Rust like a pro");
+/// ```
+///
+/// Delete the Todo:
+/// ```
+/// # let mut manager = rudo::todo_manager::TodoManager::default();
+/// # let id = manager.add_todo("Learn Rust");
+/// manager.delete_todo(id);
+/// ```
 #[derive(Default)]
 pub struct TodoManager {
     id_counter: usize,
@@ -9,6 +94,19 @@ pub struct TodoManager {
 }
 
 impl TodoManager {
+    /// Creates a new `TodoManager` holding the provided list of [`Todo`]s.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rudo::todo::Todo;
+    /// # use rudo::todo_manager::TodoManager;
+    /// let todos = vec![Todo::new(0, "Learn Rust"), Todo::new(1, "Learn to cook")];
+    /// let manager = TodoManager::new(todos.clone());
+    ///
+    /// assert_eq!(manager.get_by_id(0).unwrap(), &todos[0]);
+    /// assert_eq!(manager.get_by_id(1).unwrap(), &todos[1]);
+    /// ```
     pub fn new(todos: Vec<Todo>) -> Self {
         let last_id = todos.iter().map(|todo| todo.get_id()).max().unwrap_or(0);
 
@@ -18,6 +116,18 @@ impl TodoManager {
         }
     }
 
+    /// Creates a new [`Todo`] with the provided content and stores it
+    /// internally, then returns id of the newly created [`Todo`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rudo::todo_manager::TodoManager;
+    /// let mut manager = TodoManager::default();
+    /// let id = manager.add_todo("Learn Rust");
+    ///
+    /// assert_eq!(manager.get_by_id(id).unwrap().content, "Learn Rust");
+    /// ```
     pub fn add_todo(&mut self, content: &str) -> usize {
         self.id_counter += 1;
         self.todos.push(Todo::new(self.id_counter, content));
@@ -25,14 +135,74 @@ impl TodoManager {
         self.todos.last().unwrap().get_id()
     }
 
+    /// Returns a [`Vec`] of references to all internally stored [`Todo`]s
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rudo::todo_manager::TodoManager;
+    /// let mut manager = TodoManager::default();
+    /// manager.add_todo("Learn Rust");
+    /// manager.add_todo("Learn to cook");
+    /// manager.add_todo("Learn to program");
+    /// manager.add_todo("Learn to dance");
+    ///
+    /// let todos = manager.get_all();
+    ///
+    /// assert_eq!(todos.len(), 4);
+    /// ```
     pub fn get_all(&self) -> Vec<&Todo> {
         self.todos.iter().collect()
     }
 
+    /// Returns a reference to a [`Todo`] with the provided id, if it exists,
+    /// otherwise returns [`None`]
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rudo::todo_manager::TodoManager;
+    /// let mut manager = TodoManager::default();
+    /// let id = manager.add_todo("Learn Rust");
+    ///
+    /// // Retrieve a Todo that exists
+    /// let todo = manager.get_by_id(id);
+    /// assert_eq!(todo.unwrap().content, "Learn Rust");
+    ///
+    /// // Retrieve a Todo that doesn't exist
+    /// let non_existent_todo = manager.get_by_id(42);
+    /// assert!(non_existent_todo.is_none());
+    /// ```
     pub fn get_by_id(&self, id: usize) -> Option<&Todo> {
         self.todos.iter().find(|todo| todo.get_id() == id)
     }
 
+    /// Returns a [`Vec`] of references to all [`Todo`]s that have the provided
+    /// [`TodoStatus`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rudo::todo::TodoStatus;
+    /// # use rudo::todo_manager::TodoManager;
+    /// let mut manager = TodoManager::default();
+    /// manager.add_todo("Learn Rust");
+    /// manager.add_todo("Learn to cook");
+    /// manager.add_todo("Learn to program");
+    /// manager.add_todo("Learn to dance");
+    ///
+    /// manager.change_status(1, TodoStatus::InProgress);
+    /// manager.change_status(3, TodoStatus::Done);
+    ///
+    /// let open_todos = manager.get_by_status(TodoStatus::Open);
+    /// assert_eq!(open_todos.len(), 2);
+    ///
+    /// let in_progress = manager.get_by_status(TodoStatus::InProgress);
+    /// assert_eq!(in_progress.len(), 1);
+    ///
+    /// let done = manager.get_by_status(TodoStatus::Done);
+    /// assert_eq!(done.len(), 1);
+    /// ```
     pub fn get_by_status(&self, status: TodoStatus) -> Vec<&Todo> {
         self.todos
             .iter()
@@ -40,6 +210,26 @@ impl TodoManager {
             .collect()
     }
 
+    /// Changes the content of a [`Todo`] with the provided id.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Err`] if no [`Todo`] with provided id exists.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rudo::todo_manager::TodoManager;
+    /// let mut manager = TodoManager::default();
+    /// let id = manager.add_todo("Learn Rust");
+    ///
+    /// // Edit content of an existing Todo
+    /// manager.edit_content(id, "Learn Rust like a pro");
+    ///
+    /// // Try to edit content of a non-existent Todo
+    /// let result = manager.edit_content(42, "This won't work");
+    /// assert!(result.is_err());
+    /// ```
     pub fn edit_content(&mut self, id: usize, content: &str) -> Result<(), TodoError> {
         let todo = self.todos.iter_mut().find(|todo| todo.get_id() == id);
 
@@ -51,6 +241,31 @@ impl TodoManager {
         }
     }
 
+    /// Changes the status of a [`Todo`] with the provided id.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Err`] if no [`Todo`] with provided id exists.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rudo::todo::TodoStatus;
+    /// # use rudo::todo_manager::TodoManager;
+    /// let mut manager = TodoManager::default();
+    /// let id = manager.add_todo("Learn Rust");
+    ///
+    /// // Change status of an existing Todo
+    /// manager.change_status(id, TodoStatus::InProgress);
+    /// assert_eq!(
+    ///     manager.get_by_id(id).unwrap().status,
+    ///     TodoStatus::InProgress
+    /// );
+    ///
+    /// // Try to change status of a non-existent Todo
+    /// let result = manager.change_status(42, TodoStatus::Done);
+    /// assert!(result.is_err());
+    /// ```
     pub fn change_status(&mut self, id: usize, state: TodoStatus) -> Result<(), TodoError> {
         let todo = self.todos.iter_mut().find(|todo| todo.get_id() == id);
 
@@ -62,6 +277,27 @@ impl TodoManager {
         }
     }
 
+    /// Deletes a [`Todo`] with the provided id.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Err`] if no [`Todo`] with provided id exists.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use rudo::todo_manager::TodoManager;
+    /// let mut manager = TodoManager::default();
+    /// let id = manager.add_todo("Learn Rust");
+    ///
+    /// // Delete an existing Todo
+    /// manager.delete_todo(id);
+    /// assert!(manager.get_by_id(id).is_none());
+    ///
+    /// // Try to delete a non-existent Todo
+    /// let result = manager.delete_todo(42);
+    /// assert!(result.is_err());
+    /// ```
     pub fn delete_todo(&mut self, id: usize) -> Result<(), TodoError> {
         let todo_position = self.todos.iter().position(|todo| todo.get_id() == id);
 
@@ -212,7 +448,7 @@ mod test {
 
         let todo = manager.get_by_id(42);
 
-        assert_eq!(todo, None)
+        assert!(todo.is_none())
     }
 
     #[test]
