@@ -45,6 +45,19 @@ impl Todo {
     ///
     /// The created `Todo` item starts with a default
     /// [`Open`](TodoStatus::Open) [`TodoStatus`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rudo::todo::{Todo, TodoStatus};
+    ///
+    /// // create a new Todo with Id == 1
+    /// let todo = Todo::new(1, "Cook dinner");
+    ///
+    /// assert_eq!(todo.content, "Cook dinner");
+    /// assert_eq!(todo.status, TodoStatus::Open);
+    /// assert_eq!(todo.get_id(), 1);
+    /// ```
     pub fn new(id: usize, content: &str) -> Self {
         Self {
             id,
