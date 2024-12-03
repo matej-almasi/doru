@@ -8,9 +8,21 @@ use crate::todo::Todo;
 
 use super::{TodoStorage, TodoStorageError};
 
+/// A storage implementation that reads and writes todos to a JSON file.
 pub struct JsonStorage {}
 
 impl TodoStorage for JsonStorage {
+    /// Load [`Todo`]s from a JSON file at the given path.
+    ///
+    /// Returns a [`Vec`] of [`Todo`]s if the file exists and is valid JSON
+    /// matching the expected structure.
+    ///
+    /// Returns an empty [`Vec`] if the file is empty.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Err`] if the file does not exist, is not valid JSON, or if
+    /// the JSON does not match the expected structure.
     fn load(path: &Path) -> Result<Vec<Todo>, TodoStorageError> {
         let json = fs::read_to_string(path)
             .map_err(|_| TodoStorageError::FileError(path.to_path_buf()))?;
@@ -25,6 +37,12 @@ impl TodoStorage for JsonStorage {
         Ok(todos)
     }
 
+    /// Save the given [`Todo`]s to a JSON file at the given path.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Err`] if the file cannot be opened or written to or if the
+    /// [`Todo`]s cannot be serialized.
     fn save(todos: &[&Todo], path: &Path) -> Result<(), TodoStorageError> {
         let json = serde_json::to_string(todos).map_err(|_| TodoStorageError::SerializeError)?;
 
