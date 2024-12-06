@@ -1,6 +1,6 @@
-//! # Rudo
+//! # Doru
 //!
-//! Rudo is a simple library providing basic `Todo` functionality. In its heart
+//! Doru is a simple library providing basic `Todo` functionality. In its heart
 //! is a `TodoManager` that manages a vector of `Todo`s - any interaction with
 //! individual `Todo`s is handled by the Manager.
 //!
@@ -14,8 +14,8 @@
 //! # Example
 //!
 //! ```
-//! use rudo::todo::TodoStatus;
-//! use rudo::todo_manager::TodoManager;
+//! use doru::todo::TodoStatus;
+//! use doru::todo_manager::TodoManager;
 //!
 //! let mut manager = TodoManager::default();
 //!

@@ -7,16 +7,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in library 'rudo'",
+            "name": "Debug unit tests in library 'doru'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
                     "--lib",
-                    "--package=rudo"
+                    "--package=doru"
                 ],
                 "filter": {
-                    "name": "rudo",
+                    "name": "doru",
                     "kind": "lib"
                 }
             },
@@ -26,15 +26,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'rudo'",
+            "name": "Debug executable 'doru'",
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=rudo",
-                    "--package=rudo"
+                    "--bin=doru",
+                    "--package=doru"
                 ],
                 "filter": {
-                    "name": "rudo",
+                    "name": "doru",
                     "kind": "bin"
                 }
             },
@@ -44,16 +44,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'rudo'",
+            "name": "Debug unit tests in executable 'doru'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--bin=rudo",
-                    "--package=rudo"
+                    "--bin=doru",
+                    "--package=doru"
                 ],
                 "filter": {
-                    "name": "rudo",
+                    "name": "doru",
                     "kind": "bin"
                 }
             },

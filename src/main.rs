@@ -1,17 +1,17 @@
-//! Entry point for the `rudo` application, serving as an example use of the
-//! rudo library. It defines the command-line interface (CLI) and handles the
+//! Entry point for the `doru` application, serving as an example use of the
+//! doru library. It defines the command-line interface (CLI) and handles the
 //! execution of commands.
 
 use std::{env, error::Error, fs, path::Path, path::PathBuf};
 
 use clap::{Parser, Subcommand};
-use rudo::{
+use doru::{
     storage::{self, TodoStorage},
     todo::TodoStatus,
     todo_manager::TodoManager,
 };
 
-/// CLI structure for the `rudo` application.
+/// CLI structure for the `doru` application.
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
 struct Cli {
@@ -24,7 +24,7 @@ struct Cli {
     path: Option<String>,
 }
 
-/// Available commands for the `rudo` application.
+/// Available commands for the `doru` application.
 #[derive(Subcommand)]
 enum Commands {
     /// Add a new TODO item.
@@ -43,7 +43,7 @@ enum Commands {
     Delete { id: usize },
 }
 
-/// Main entry point for the `rudo` application.
+/// Main entry point for the `doru` application.
 fn main() {
     let cli = Cli::parse();
 
@@ -93,17 +93,17 @@ fn main() {
 
 /// Get the path to the todos file.
 ///
-/// This function checks the `RUDO_PATH` environment variable. If not set, it
-/// defaults to `~/.rudo/todos.json`.
+/// This function checks the `DORU_PATH` environment variable. If not set, it
+/// defaults to `~/.doru/todos.json`.
 ///
 /// # Errors
 ///
 /// Returns an error if the user's home directory cannot be determined.
 fn get_todos_path() -> Result<PathBuf, Box<dyn Error>> {
-    if let Ok(env_path) = env::var("RUDO_PATH") {
+    if let Ok(env_path) = env::var("DORU_PATH") {
         Ok(PathBuf::from(env_path))
     } else if let Some(home_dir) = dirs::home_dir() {
-        Ok(home_dir.join(".rudo").join("todos.json"))
+        Ok(home_dir.join(".doru").join("todos.json"))
     } else {
         Err("Unable to determine home directory".into())
     }

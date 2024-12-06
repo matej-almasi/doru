@@ -1,19 +1,19 @@
-# Rudo
+# Doru
 
-Rudo is a simple TODO list in your terminal.
+Doru is a simple TODO list in your terminal.
 
 ## Features
 
 ### Add new TODOs
 
 ```sh
-rudo add "Code something amazing"
+doru add "Code something amazing"
 ```
 
 ### List all your TODOs
 
 ```sh
-rudo list
+doru list
 [ ] Learn Rust           [Open] (ID: 1)
 [ ] Build a project      [InProgress] (ID: 2)
 [ ] Publish on GitHub    [Open] (ID: 3)
@@ -22,19 +22,19 @@ rudo list
 ### Edit a TODO
 
 ```sh
-rudo edit 1 "Learn Rust like a Pro"
+doru edit 1 "Learn Rust like a Pro"
 ```
 
 ### Update status of a TODO
 
 ```sh
-rudo status 1 in-progress
+doru status 1 in-progress
 ```
 
 ### List TODOs with specific status
 
 ```sh
-rudo list in-progress
+doru list in-progress
 [ ] Learn Rust like a Pro [InProgress] (ID: 1)
 [ ] Build a project      [InProgress] (ID: 2)
 ```
@@ -42,20 +42,20 @@ rudo list in-progress
 ### Delete a TODO
 
 ```sh
-rudo delete 3
+doru delete 3
 ```
 
 ## Installation
 
 ### Using Cargo Install
 
-You can use Cargo to install Rudo from [crates.io](https://crates.io/)
+You can use Cargo to install Doru from [crates.io](https://crates.io/)
 
 ### Download the binary directly
 
 TODO: add instructions to download artifact from GitHub, when ready
 
-If you want to run Rudo like in the examples above, you will need to add Rudo
+If you want to run Doru like in the examples above, you will need to add Doru
 to your Path.
 
 ### Build from source
@@ -65,17 +65,17 @@ machine, you can clone directly from GitHub and build locally. No additional
 dependencies are required:
 
 ```sh
-git clone https://github.com/yourusername/rudo.git
-cd rudo
+git clone https://github.com/yourusername/doru.git
+cd doru
 cargo build --release
 ```
 
 ## Configuration
 
-Rudo stores TODO items in a JSON file. By default, this file is located at
-`~/.rudo/TODOs.json`. You can change the location of the storage file by
-setting the `RUDO_PATH` environment variable or by using the `--path`
-option with the `rudo` command.
+Doru stores TODO items in a JSON file. By default, this file is located at
+`~/.doru/TODOs.json`. You can change the location of the storage file by
+setting the `DORU_PATH` environment variable or by using the `--path`
+option with the `doru` command.
 
 ## Documentation
 

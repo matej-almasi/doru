@@ -6,7 +6,7 @@
 //! # Examples
 //!
 //! ```
-//! use rudo::todo::{Todo, TodoStatus};
+//! use doru::todo::{Todo, TodoStatus};
 //!
 //! // Create a new Todo item
 //! let mut todo = Todo::new(1, "Write module level documentation");
@@ -49,7 +49,7 @@ impl Todo {
     /// # Examples
     ///
     /// ```
-    /// use rudo::todo::{Todo, TodoStatus};
+    /// use doru::todo::{Todo, TodoStatus};
     ///
     /// // create a new Todo with Id == 1
     /// let todo = Todo::new(1, "Cook dinner");

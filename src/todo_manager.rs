@@ -7,9 +7,9 @@
 //! # Examples
 //!
 //! ```
-//! # fn main() -> Result<(), rudo::TodoError> {
-//! use rudo::todo::TodoStatus;
-//! use rudo::todo_manager::TodoManager;
+//! # fn main() -> Result<(), doru::TodoError> {
+//! use doru::todo::TodoStatus;
+//! use doru::todo_manager::TodoManager;
 //!
 //! // Create a new TodoManager.
 //! let mut manager = TodoManager::default();
@@ -58,32 +58,32 @@ use crate::TodoError;
 ///
 /// Create a default `TodoManager` with an empty collection of Todos:
 /// ```
-/// let mut manager = rudo::todo_manager::TodoManager::default();
+/// let mut manager = doru::todo_manager::TodoManager::default();
 /// ```
 ///
 /// Add a new Todo to the manager:
 /// ```
-/// # let mut manager = rudo::todo_manager::TodoManager::default();
+/// # let mut manager = doru::todo_manager::TodoManager::default();
 /// let id = manager.add_todo("Learn Rust");
 /// ```
 ///
 /// Change status of the Todo:
 /// ```
-/// # let mut manager = rudo::todo_manager::TodoManager::default();
+/// # let mut manager = doru::todo_manager::TodoManager::default();
 /// # let id = manager.add_todo("Learn Rust");
-/// manager.change_todo_status(id, rudo::todo::TodoStatus::InProgress);
+/// manager.change_todo_status(id, doru::todo::TodoStatus::InProgress);
 /// ```
 ///
 /// Edit the Todo's content:
 /// ```
-/// # let mut manager = rudo::todo_manager::TodoManager::default();
+/// # let mut manager = doru::todo_manager::TodoManager::default();
 /// # let id = manager.add_todo("Learn Rust");
 /// manager.edit_todo_content(id, "Learn Rust like a pro");
 /// ```
 ///
 /// Delete the Todo:
 /// ```
-/// # let mut manager = rudo::todo_manager::TodoManager::default();
+/// # let mut manager = doru::todo_manager::TodoManager::default();
 /// # let id = manager.add_todo("Learn Rust");
 /// manager.delete_todo(id);
 /// ```
@@ -99,8 +99,8 @@ impl TodoManager {
     /// # Examples
     ///
     /// ```
-    /// # use rudo::todo::Todo;
-    /// # use rudo::todo_manager::TodoManager;
+    /// # use doru::todo::Todo;
+    /// # use doru::todo_manager::TodoManager;
     /// let todos = vec![Todo::new(0, "Learn Rust"), Todo::new(1, "Learn to cook")];
     /// let manager = TodoManager::new(todos.clone());
     ///
@@ -122,7 +122,7 @@ impl TodoManager {
     /// # Examples
     ///
     /// ```
-    /// # use rudo::todo_manager::TodoManager;
+    /// # use doru::todo_manager::TodoManager;
     /// let mut manager = TodoManager::default();
     /// let id = manager.add_todo("Learn Rust");
     ///
@@ -140,7 +140,7 @@ impl TodoManager {
     /// # Examples
     ///
     /// ```
-    /// # use rudo::todo_manager::TodoManager;
+    /// # use doru::todo_manager::TodoManager;
     /// let mut manager = TodoManager::default();
     /// manager.add_todo("Learn Rust");
     /// manager.add_todo("Learn to cook");
@@ -161,7 +161,7 @@ impl TodoManager {
     /// # Examples
     ///
     /// ```
-    /// # use rudo::todo_manager::TodoManager;
+    /// # use doru::todo_manager::TodoManager;
     /// let mut manager = TodoManager::default();
     /// let id = manager.add_todo("Learn Rust");
     ///
@@ -183,8 +183,8 @@ impl TodoManager {
     /// # Examples
     ///
     /// ```
-    /// # use rudo::todo::TodoStatus;
-    /// # use rudo::todo_manager::TodoManager;
+    /// # use doru::todo::TodoStatus;
+    /// # use doru::todo_manager::TodoManager;
     /// let mut manager = TodoManager::default();
     /// manager.add_todo("Learn Rust");
     /// manager.add_todo("Learn to cook");
@@ -219,7 +219,7 @@ impl TodoManager {
     /// # Examples
     ///
     /// ```
-    /// # use rudo::todo_manager::TodoManager;
+    /// # use doru::todo_manager::TodoManager;
     /// let mut manager = TodoManager::default();
     /// let id = manager.add_todo("Learn Rust");
     ///
@@ -250,8 +250,8 @@ impl TodoManager {
     /// # Examples
     ///
     /// ```
-    /// # use rudo::todo::TodoStatus;
-    /// # use rudo::todo_manager::TodoManager;
+    /// # use doru::todo::TodoStatus;
+    /// # use doru::todo_manager::TodoManager;
     /// let mut manager = TodoManager::default();
     /// let id = manager.add_todo("Learn Rust");
     ///
@@ -286,7 +286,7 @@ impl TodoManager {
     /// # Examples
     ///
     /// ```
-    /// # use rudo::todo_manager::TodoManager;
+    /// # use doru::todo_manager::TodoManager;
     /// let mut manager = TodoManager::default();
     /// let id = manager.add_todo("Learn Rust");
     ///
