@@ -64,14 +64,14 @@ fn main() {
         }
 
         Commands::Edit { id, content } => todo_manager
-            .edit_content(id, &content)
+            .edit_todo_content(id, &content)
             .unwrap_or_else(|e| println!("{e}")),
 
         Commands::List { status } => {
             let todos = if let Some(value) = status {
-                todo_manager.get_by_status(value)
+                todo_manager.todos_by_status(value)
             } else {
-                todo_manager.get_all()
+                todo_manager.all_todos()
             };
 
             for todo in todos {
@@ -80,7 +80,7 @@ fn main() {
         }
 
         Commands::Status { id, status } => todo_manager
-            .change_status(id, status)
+            .change_todo_status(id, status)
             .unwrap_or_else(|e| println!("{e}")),
 
         Commands::Delete { id } => todo_manager
@@ -88,7 +88,7 @@ fn main() {
             .unwrap_or_else(|e| println!("{e}")),
     }
 
-    storage::JsonStorage::save(&todo_manager.get_all(), &path).unwrap_or_else(|e| panic!("{e}"));
+    storage::JsonStorage::save(&todo_manager.all_todos(), &path).unwrap_or_else(|e| panic!("{e}"));
 }
 
 /// Get the path to the todos file.
