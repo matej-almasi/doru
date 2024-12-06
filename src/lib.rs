@@ -20,9 +20,11 @@
 //! let mut manager = TodoManager::default();
 //!
 //! let id = manager.add_todo("Learn Rust");
-//! manager.change_status(id, TodoStatus::InProgress).unwrap();
+//! manager
+//!     .change_todo_status(id, TodoStatus::InProgress)
+//!     .unwrap();
 //!
-//! let todos = manager.get_all();
+//! let todos = manager.all_todos();
 //!
 //! for todo in &todos {
 //!     println!("{:?}", todo);

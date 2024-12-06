@@ -56,7 +56,7 @@ impl Todo {
     ///
     /// assert_eq!(todo.content, "Cook dinner");
     /// assert_eq!(todo.status, TodoStatus::Open);
-    /// assert_eq!(todo.get_id(), 1);
+    /// assert_eq!(todo.id(), 1);
     /// ```
     pub fn new(id: usize, content: &str) -> Self {
         Self {
