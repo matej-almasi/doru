@@ -8,6 +8,10 @@ readme = "README.MD"
 license = "MIT OR Apache-2.0"
 keywords = ["Todo"]
 
+[[bin]]
+name = "doru"
+path = "src/main.rs"
+
 [dependencies]
 clap = { version = "4.5.21", features = ["derive"] }
 dirs = "5.0.1"
