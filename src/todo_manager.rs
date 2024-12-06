@@ -108,7 +108,7 @@ impl TodoManager {
     /// assert_eq!(manager.get_by_id(1).unwrap(), &todos[1]);
     /// ```
     pub fn new(todos: Vec<Todo>) -> Self {
-        let last_id = todos.iter().map(|todo| todo.get_id()).max().unwrap_or(0);
+        let last_id = todos.iter().map(|todo| todo.id()).max().unwrap_or(0);
 
         Self {
             id_counter: last_id,
@@ -132,7 +132,7 @@ impl TodoManager {
         self.id_counter += 1;
         self.todos.push(Todo::new(self.id_counter, content));
 
-        self.todos.last().unwrap().get_id()
+        self.todos.last().unwrap().id()
     }
 
     /// Returns a [`Vec`] of references to all internally stored [`Todo`]s
@@ -151,7 +151,7 @@ impl TodoManager {
     ///
     /// assert_eq!(todos.len(), 4);
     /// ```
-    pub fn get_all(&self) -> Vec<&Todo> {
+    pub fn all_todos(&self) -> Vec<&Todo> {
         self.todos.iter().collect()
     }
 
@@ -173,8 +173,8 @@ impl TodoManager {
     /// let non_existent_todo = manager.get_by_id(42);
     /// assert!(non_existent_todo.is_none());
     /// ```
-    pub fn get_by_id(&self, id: usize) -> Option<&Todo> {
-        self.todos.iter().find(|todo| todo.get_id() == id)
+    pub fn todo_by_id(&self, id: usize) -> Option<&Todo> {
+        self.todos.iter().find(|todo| todo.id() == id)
     }
 
     /// Returns a [`Vec`] of references to all [`Todo`]s that have the provided
@@ -203,7 +203,7 @@ impl TodoManager {
     /// let done = manager.get_by_status(TodoStatus::Done);
     /// assert_eq!(done.len(), 1);
     /// ```
-    pub fn get_by_status(&self, status: TodoStatus) -> Vec<&Todo> {
+    pub fn todos_by_status(&self, status: TodoStatus) -> Vec<&Todo> {
         self.todos
             .iter()
             .filter(|todo| todo.status == status)
@@ -230,8 +230,8 @@ impl TodoManager {
     /// let result = manager.edit_content(42, "This won't work");
     /// assert!(result.is_err());
     /// ```
-    pub fn edit_content(&mut self, id: usize, content: &str) -> Result<(), TodoError> {
-        let todo = self.todos.iter_mut().find(|todo| todo.get_id() == id);
+    pub fn edit_todo_content(&mut self, id: usize, content: &str) -> Result<(), TodoError> {
+        let todo = self.todos.iter_mut().find(|todo| todo.id() == id);
 
         if let Some(todo) = todo {
             todo.content = String::from(content);
@@ -266,8 +266,8 @@ impl TodoManager {
     /// let result = manager.change_status(42, TodoStatus::Done);
     /// assert!(result.is_err());
     /// ```
-    pub fn change_status(&mut self, id: usize, state: TodoStatus) -> Result<(), TodoError> {
-        let todo = self.todos.iter_mut().find(|todo| todo.get_id() == id);
+    pub fn change_todo_status(&mut self, id: usize, state: TodoStatus) -> Result<(), TodoError> {
+        let todo = self.todos.iter_mut().find(|todo| todo.id() == id);
 
         if let Some(todo) = todo {
             todo.status = state;
@@ -299,7 +299,7 @@ impl TodoManager {
     /// assert!(result.is_err());
     /// ```
     pub fn delete_todo(&mut self, id: usize) -> Result<(), TodoError> {
-        let todo_position = self.todos.iter().position(|todo| todo.get_id() == id);
+        let todo_position = self.todos.iter().position(|todo| todo.id() == id);
 
         if let Some(position) = todo_position {
             self.todos.remove(position);
@@ -380,7 +380,7 @@ mod test {
         manager.add_todo("Lorem");
         manager.add_todo("Ipsum");
 
-        assert_eq!(manager.todos[1].get_id(), 2);
+        assert_eq!(manager.todos[1].id(), 2);
     }
 
     #[test]
@@ -392,7 +392,7 @@ mod test {
 
         manager.todos[2].status = TodoStatus::InProgress;
 
-        let open_todos = manager.get_by_status(TodoStatus::Open);
+        let open_todos = manager.todos_by_status(TodoStatus::Open);
 
         assert_eq!(open_todos.len(), 2);
 
@@ -408,7 +408,7 @@ mod test {
 
         manager.todos[1].status = TodoStatus::InProgress;
 
-        let in_progress = manager.get_by_status(TodoStatus::InProgress);
+        let in_progress = manager.todos_by_status(TodoStatus::InProgress);
 
         assert_eq!(in_progress.len(), 1);
 
@@ -424,7 +424,7 @@ mod test {
         manager.add_todo("Dolor");
         manager.add_todo("Sit");
 
-        let todos = manager.get_all();
+        let todos = manager.all_todos();
 
         assert_eq!(todos.len(), 4)
     }
@@ -437,7 +437,7 @@ mod test {
         manager.add_todo("This has id 2");
         let id = manager.add_todo("This has id 3");
 
-        let todo = manager.get_by_id(id);
+        let todo = manager.todo_by_id(id);
 
         assert_eq!(todo, Some(&manager.todos[2]))
     }
@@ -446,7 +446,7 @@ mod test {
     fn try_getting_non_existent_todo_by_id() {
         let manager = TodoManager::default();
 
-        let todo = manager.get_by_id(42);
+        let todo = manager.todo_by_id(42);
 
         assert!(todo.is_none())
     }
@@ -458,11 +458,11 @@ mod test {
         let new_id = manager.add_todo("This is a nice TODO.");
 
         let test_content = "This is even better!";
-        let result = manager.edit_content(new_id, test_content);
+        let result = manager.edit_todo_content(new_id, test_content);
 
         assert_eq!(result, Ok(()));
 
-        let updated_content = &manager.get_by_id(new_id).unwrap().content;
+        let updated_content = &manager.todo_by_id(new_id).unwrap().content;
         assert_eq!(updated_content, test_content)
     }
 
@@ -470,7 +470,7 @@ mod test {
     fn edit_nonexistent_todo_content_fails() {
         let mut manager = TodoManager::default();
 
-        let result = manager.edit_content(1, "Some content.");
+        let result = manager.edit_todo_content(1, "Some content.");
         assert_eq!(result, Err(TodoError::NotFound(1)))
     }
 
@@ -481,10 +481,10 @@ mod test {
 
         let new_state = TodoStatus::InProgress;
 
-        let result = manager.change_status(new_id, new_state);
+        let result = manager.change_todo_status(new_id, new_state);
         assert_eq!(result, Ok(()));
 
-        let updated_state = &manager.get_by_id(new_id).unwrap().status;
+        let updated_state = &manager.todo_by_id(new_id).unwrap().status;
         assert_eq!(*updated_state, new_state);
     }
 
@@ -492,7 +492,7 @@ mod test {
     fn change_nonexistent_todo_status_fails() {
         let mut manager = TodoManager::default();
 
-        let result = manager.change_status(42, TodoStatus::Done);
+        let result = manager.change_todo_status(42, TodoStatus::Done);
         assert_eq!(result, Err(TodoError::NotFound(42)));
     }
 
