@@ -67,7 +67,7 @@ impl Todo {
     }
 
     /// Returns this `Todo`'s id.
-    pub fn get_id(&self) -> usize {
+    pub fn id(&self) -> usize {
         self.id
     }
 }
@@ -96,6 +96,6 @@ mod test {
     #[test]
     fn get_id() {
         let todo = Todo::new(42, "Lorem Ipsum");
-        assert_eq!(todo.get_id(), 42);
+        assert_eq!(todo.id(), 42);
     }
 }
