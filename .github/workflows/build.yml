@@ -9,23 +9,44 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build-and-test:
+  build-and-test-linux:
     runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        target:
-          - x86_64-unknown-linux-gnu
-          - x86_64-pc-windows-gnu
-          - aarch64-unknown-linux-gnu
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Build
-        run: cargo build --target=${{ matrix.target }}
+        run: cargo build
 
       - name: Test
         run: cargo test
+
+  build-and-test-win:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: cargo build
+
+      - name: Test
+        run: cargo test
+
+  build-and-test-arm-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Cross
+        run: cargo install cross
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: cross build --target aarch64-unknown-linux-gnu
+
+      - name: Test
+        run: cross test --target aarch64-unknown-linux-gnu
