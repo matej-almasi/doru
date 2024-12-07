@@ -1,6 +1,7 @@
 # Doru
 
-Doru is a simple TODO list in your terminal.
+A simple TODO list in your terminal. ✅
+Use as a CLI or use the lib in your own Rust project! 🚀
 
 ## Features
 
@@ -53,7 +54,7 @@ You can use Cargo to install Doru from [crates.io](https://crates.io/)
 
 ### Download the binary directly
 
-TODO: add instructions to download artifact from GitHub, when ready
+You can also download Doru [directly](https://github.com/matej-almasi/doru/releases) as a standalone binary.
 
 If you want to run Doru like in the examples above, you will need to add Doru
 to your Path.
@@ -79,7 +80,15 @@ option with the `doru` command.
 
 ## Documentation
 
-TODO: add docs.rs link
+Run doru with -h or --help option to learn about available commands and how to
+use them:
+
+```sh
+doru --help
+```
+
+For the library documentation, check out the
+[docs](https://docs.rs/doru/latest/doru/).
 
 If you cloned the repository, you can run
 
