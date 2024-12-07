@@ -1,6 +1,6 @@
 # Doru
 
-A simple TODO list in your terminal. ✅
+A simple TODO list in your terminal. ✅  
 Use as a CLI or use the lib in your own Rust project! 🚀
 
 ## Features
