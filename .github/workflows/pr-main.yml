@@ -29,9 +29,19 @@ jobs:
             target: x86_64-pc-windows-msvc
             command: cargo
 
+        rust:
+          - stable
+          - nightly
+          - beta
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust }}
 
       - name: Cache Cargo and cross
         uses: actions/cache@v4
@@ -55,6 +65,18 @@ jobs:
 
       - name: Test
         run: ${{ matrix.platform.command }} test --target ${{ matrix.platform.target }}
+
+      - name: Issue warnings for Beta or Nightly fails
+        if: failure() && matrix.rust != 'stable'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: `🚨 Failures on **${{ matrix.rust }}** Rust with **${{ matrix.platform.target }}** target.`
+            })
 
   format:
     runs-on: ubuntu-latest
