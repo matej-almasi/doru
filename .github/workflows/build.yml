@@ -33,15 +33,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Cache Cargo and cross
+      - name: Cache Cargo, Cross, and Docker Images
         uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             ~/.cargo/bin
-          key: ${{ matrix.platform.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: ${{ matrix.platform.target }}-cargo
+            /var/lib/docker
+          key: ${{ matrix.platform.target }}-cargo-cross-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ matrix.platform.target }}-cargo-cross-
 
       - name: Install cross
         if: matrix.platform.command == 'cross'
