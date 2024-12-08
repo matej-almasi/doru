@@ -62,9 +62,11 @@ jobs:
 
       - name: Build
         run: ${{ matrix.platform.command }} build --target ${{ matrix.platform.target }}
+        continue-on-error: ${{ matrix.rust != 'stable' }}
 
       - name: Test
         run: ${{ matrix.platform.command }} test --target ${{ matrix.platform.target }}
+        continue-on-error: ${{ matrix.rust != 'stable' }}
 
       - name: Issue warnings for Beta or Nightly fails
         if: failure() && matrix.rust != 'stable'
