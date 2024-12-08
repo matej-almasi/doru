@@ -55,3 +55,20 @@ jobs:
 
       - name: Test
         run: ${{ matrix.platform.command }} test --target ${{ matrix.platform.target }}
+
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Format
+        run: cargo +nightly fmt --check
+
+  clippy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clippy lint
+        run: cargo clippy -D warnings
