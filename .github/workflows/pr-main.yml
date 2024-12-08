@@ -67,6 +67,7 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           toolchain: nightly
+          components: rustfmt
 
       - name: Format
         run: cargo +nightly fmt --check
@@ -75,5 +76,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Clippy lint
         run: cargo clippy -- -D warnings
