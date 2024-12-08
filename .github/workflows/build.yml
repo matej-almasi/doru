@@ -33,9 +33,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Cache Cargo and cross
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo
+            ~/.rustup
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
       - name: Install cross
         if: matrix.platform.command == 'cross'
-        run: cargo install cross
+        run: |
+          if ! command -v cross &>/dev/null; then
+            cargo install cross
+          fi
 
       - name: Build
         run: ${{ matrix.platform.command }} build --target ${{ matrix.platform.target }}
