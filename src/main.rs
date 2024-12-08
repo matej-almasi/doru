@@ -44,7 +44,7 @@ enum Commands {
 }
 
 /// Main entry point for the `doru` application.
-fn main() {
+fn ain() {
     let cli = Cli::parse();
 
     let path = match cli.path {
