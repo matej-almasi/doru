@@ -34,6 +34,10 @@ jobs:
           - nightly
           - beta
 
+    env:
+      BuildExitCode: 0
+      TestExitCode: 0
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -61,15 +65,19 @@ jobs:
           fi
 
       - name: Build
-        run: ${{ matrix.platform.command }} build --target ${{ matrix.platform.target }}
+        run: |
+          ${{ matrix.platform.command }} build --target ${{ matrix.platform.target }}
+          echo "exit_code=$?" >> $BuildExitCode
         continue-on-error: ${{ matrix.rust != 'stable' }}
 
       - name: Test
-        run: ${{ matrix.platform.command }} test --target ${{ matrix.platform.target }}
+        run: |
+          ${{ matrix.platform.command }} test --target ${{ matrix.platform.target }}
+          echo "exit_code=$?" >> $TestExitCode
         continue-on-error: ${{ matrix.rust != 'stable' }}
 
-      - name: Issue warnings for Beta or Nightly fails
-        if: failure() && matrix.rust != 'stable'
+      - name: Issue warnings for Beta or Nightly build fails
+        if: env.BuildExitCode != 0 && matrix.rust != 'stable'
         uses: actions/github-script@v7
         with:
           script: |
@@ -77,7 +85,19 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.pull_request.number,
-              body: `🚨 Failures on **${{ matrix.rust }}** Rust with **${{ matrix.platform.target }}** target.`
+              body: `🚨 🛠️ Build Failures on **${{ matrix.rust }}** Rust with **${{ matrix.platform.target }}** target.`
+            })
+
+      - name: Issue warnings for Beta or Nightly test fails
+        if: env.TestExitCode != 0 && matrix.rust != 'stable'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: `🚨 ❌ Failures on **${{ matrix.rust }}** Rust with **${{ matrix.platform.target }}** target.`
             })
 
   format:
