@@ -96,11 +96,7 @@ jobs:
         continue-on-error: true
 
       - name: Issue warnings for beta/ nightly fails
-        if: >
-          ${{ steps.build-beta.outcome == 'failure' ||
-              steps.test-beta.outcome == 'failure' ||
-              steps.build-nightly.outcome == 'failure' ||
-              steps.test-nightly.outcome == 'failure'}}
+        if: ${{ steps.build-beta.outcome == 'failure' || steps.test-beta.outcome == 'failure' || steps.build-nightly.outcome == 'failure' || steps.test-nightly.outcome == 'failure' }}
         uses: actions/github-script@v7
         with:
           script: |
