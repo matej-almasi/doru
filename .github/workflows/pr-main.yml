@@ -129,11 +129,14 @@ jobs:
               body.concat(`🚨 ❌ Test Failures on **${failed_toolchain}** Rust with **${{ matrix.platform.target }}** target.`)
             }
 
+            console.log(beta_build_fail)
+            console.log(body)
+
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.pull_request.number,
-              body 
+              body: body
             });
 
   format:
