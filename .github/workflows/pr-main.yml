@@ -135,6 +135,8 @@ jobs:
             });
 
   format:
+    needs: build-and-test
+
     runs-on: ubuntu-latest
 
     steps:
@@ -151,6 +153,7 @@ jobs:
         run: cargo +nightly fmt --check
 
   clippy:
+    needs: build-and-test
     runs-on: ubuntu-latest
 
     steps:
