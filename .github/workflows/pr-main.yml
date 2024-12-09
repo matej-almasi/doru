@@ -106,14 +106,14 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const body = "";
+            let body = "";
 
             const beta_build_fail = ${{ steps.build-beta.outcome == 'failure' }};
             const nightly_build_fail = ${{ steps.build-nightly.outcome == 'failure' }};
 
             if (beta_build_fail || nightly_build_fail) {
               const failed_toolchain = beta_build_fail ? "beta" : "nightly"
-              body.concat(`🚨 🛠️ Build Failures on **${failed_toolchain}** Rust with **${{ matrix.platform.target }}** target.\n`)
+              body = body.concat(`🚨 🛠️ Build Failures on **${failed_toolchain}** Rust with **${{ matrix.platform.target }}** target.\n`)
             }
 
             const beta_test_fail = ${{ steps.test-beta.outcome == 'failure' }};
@@ -123,10 +123,10 @@ jobs:
               const failed_toolchain = beta_build_fail ? "beta" : ""
               
               if (nightly_test_fail) {
-                failed_toolchain.concat(" and nightly")
+                failed_toolchain = failed_toolchain.concat(" and nightly")
               }
 
-              body.concat(`🚨 ❌ Test Failures on **${failed_toolchain}** Rust with **${{ matrix.platform.target }}** target.`)
+              body = body.concat(`🚨 ❌ Test Failures on **${failed_toolchain}** Rust with **${{ matrix.platform.target }}** target.`)
             }
 
             console.log(beta_build_fail)
