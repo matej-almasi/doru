@@ -120,7 +120,7 @@ jobs:
             const nightly_test_fail = ${{ steps.test-nightly.outcome == 'failure' }};
 
             if (beta_test_fail || nightly_test_fail) {
-              const failed_toolchain = beta_build_fail ? "beta" : ""
+              let failed_toolchain = beta_build_fail ? "beta" : ""
               
               if (nightly_test_fail) {
                 failed_toolchain = failed_toolchain.concat(" and nightly")
