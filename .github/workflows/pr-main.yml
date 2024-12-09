@@ -64,7 +64,6 @@ jobs:
         id: build
         run: |
           ${{ matrix.platform.command }} build --target ${{ matrix.platform.target }}
-          echo "EXIT_CODE=$?"
           echo "EXIT_CODE=$?" >> "$GITHUB_OUTPUT"
         continue-on-error: ${{ matrix.rust != 'stable' }}
 
@@ -72,7 +71,6 @@ jobs:
         id: test
         run: |
           ${{ matrix.platform.command }} test --target ${{ matrix.platform.target }}
-          echo "EXIT_CODE=$?"
           echo "EXIT_CODE=$?" >> "$GITHUB_OUTPUT"
         continue-on-error: ${{ matrix.rust != 'stable' }}
 
@@ -82,7 +80,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const { BUILD_RESULT } = process.env
+            const BUILD_RESULT = '${{ steps.build.outputs.EXIT_CODE }}'
             if (BUILD_RESULT == 0) {
               return;
             }
@@ -94,12 +92,10 @@ jobs:
             })
 
       - name: Issue warnings for ${{ matrix.rust }} test fails
-        env:
-          TEST_RESULT: ${{ steps.test.outputs.EXIT_CODE }}
         uses: actions/github-script@v7
         with:
           script: |
-            const { TEST_RESULT } = process.env
+            const { TEST_RESULT } = '${{ steps.test.outputs.EXIT_CODE }}'
             if (TEST_RESULT == 0) {
               return;
             }
