@@ -39,7 +39,8 @@ jobs:
       - name: Merge PR branch into main
         if: ${{ github.event_name == 'pull_request'}}
         run: |
-          git merge main
+          git switch main
+          git merge ${{ github.event.pull_request.head.ref }}
 
       - name: Set up Rust
         uses: actions-rust-lang/setup-rust-toolchain@v1
