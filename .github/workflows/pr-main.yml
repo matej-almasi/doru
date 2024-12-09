@@ -159,9 +159,6 @@ jobs:
 
       - name: Setup Rust
         uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          toolchain: nightly
-          components: rustfmt
 
       - name: Clippy lint
         run: cargo clippy -- -D warnings
