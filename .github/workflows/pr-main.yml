@@ -29,19 +29,12 @@ jobs:
             target: x86_64-pc-windows-msvc
             command: cargo
 
-        rust:
-          - stable
-          - nightly
-          - beta
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up Rust
         uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          toolchain: ${{ matrix.rust }}
 
       - name: Cache Cargo and cross
         uses: actions/cache@v4
@@ -60,42 +53,86 @@ jobs:
             cargo install cross
           fi
 
-      - name: Build
+      - name: Build stable
         id: build
-        run: |
-          ${{ matrix.platform.command }} build --target ${{ matrix.platform.target }};
-        continue-on-error: ${{ matrix.rust != 'stable' }}
+        run: ${{ matrix.platform.command }} build --target ${{ matrix.platform.target }};
 
-      - name: Test
+      - name: Test stable
         id: test
-        if: ${{ steps.build.outcome == 'success'}}
-        run: |
-          ${{ matrix.platform.command }} test --target ${{ matrix.platform.target }};
-        continue-on-error: ${{ matrix.rust != 'stable' }}
+        run: ${{ matrix.platform.command }} test --target ${{ matrix.platform.target }};
 
-      - name: Issue warnings for ${{ matrix.rust }} build fails
-        if: ${{ steps.build.outcome == 'failure'}}
+      - name: Set up Rust beta
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: beta
+
+      - name: Build beta
+        id: build-beta
+        run: ${{ matrix.platform.command }} +beta build --target ${{ matrix.platform.target }};
+        continue-on-error: true
+
+      - name: Test beta
+        id: test-beta
+        if: ${{ steps.build-beta.outcome == 'success' }}
+        run: ${{ matrix.platform.command }} +beta test --target ${{ matrix.platform.target }};
+        continue-on-error: true
+
+      - name: Set up Rust nightly
+        if: ${{ steps.build-beta.outcome == 'success' }}
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: nightly
+
+      - name: Build nightly
+        id: build-nightly
+        if: ${{ steps.build-beta.outcome == 'success' }}
+        run: ${{ matrix.platform.command }} +nightly build --target ${{ matrix.platform.target }};
+        continue-on-error: true
+
+      - name: Test nightly
+        id: test-nightly
+        if: ${{ steps.build-nightly.outcome == 'success' }}
+        run: ${{ matrix.platform.command }} +nightly test --target ${{ matrix.platform.target }};
+        continue-on-error: true
+
+      - name: Issue warnings for beta/ nightly fails
+        if: >
+          ${{ steps.build-beta.outcome == 'failure' ||
+              steps.test-beta.outcome == 'failure' ||
+              steps.build-nightly.outcome == 'failure' ||
+              steps.test-nightly.outcome == 'failure'}}
         uses: actions/github-script@v7
         with:
           script: |
+            const body = "";
+
+            const beta_build_fail = ${{ steps.build-beta.outcome == 'failure' }};
+            const nightly_build_fail = ${{ steps.build-nightly.outcome == 'failure' }};
+
+            if (beta_build_fail || nightly_build_fail) {
+              const failed_toolchain = beta_build_fail ? "beta" : "nightly"
+              body.concat(`🚨 🛠️ Build Failures on **${failed_toolchain}** Rust with **${{ matrix.platform.target }}** target.\n`)
+            }
+
+            const beta_test_fail = ${{ steps.test-beta.outcome == 'failure' }};
+            const nightly_test_fail = ${{ steps.test-nightly.outcome == 'failure' }};
+
+            if (beta_test_fail || nightly_test_fail) {
+              const failed_toolchain = beta_build_fail ? "beta" : ""
+              
+              if (nightly_test_fail) {
+                failed_toolchain.concat(" and nightly")
+              }
+
+              body.concat(`🚨 ❌ Test Failures on **${failed_toolchain}** Rust with **${{ matrix.platform.target }}** target.`)
+            }
+
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.pull_request.number,
-              body: `🚨 🛠️ Build Failures on **${{ matrix.rust }}** Rust with **${{ matrix.platform.target }}** target.`
-            })
-
-      - name: Issue warnings for ${{ matrix.rust }} test fails
-        if: ${{ steps.test.outcome == 'failure' }}
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.payload.pull_request.number,
-              body: `🚨 ❌ Failures on **${{ matrix.rust }}** Rust with **${{ matrix.platform.target }}** target.`
-            })
+              body 
+            });
 
   format:
     runs-on: ubuntu-latest
