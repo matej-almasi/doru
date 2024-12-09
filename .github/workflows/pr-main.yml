@@ -56,12 +56,10 @@ jobs:
       - name: Build stable
         id: build
         run: ${{ matrix.platform.command }} build --target ${{ matrix.platform.target }};
-        continue-on-error: true
 
       - name: Test stable
         id: test
         run: ${{ matrix.platform.command }} test --target ${{ matrix.platform.target }};
-        continue-on-error: true
 
       - name: Set up Rust beta
         uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -75,25 +73,25 @@ jobs:
 
       - name: Test beta
         id: test-beta
-        # if: ${{ steps.build-beta.outcome == 'success' }}
+        if: ${{ steps.build-beta.outcome == 'success' }}
         run: ${{ matrix.platform.command }} +beta test --target ${{ matrix.platform.target }};
         continue-on-error: true
 
       - name: Set up Rust nightly
-        # if: ${{ steps.build-beta.outcome == 'success' }}
+        if: ${{ steps.build-beta.outcome == 'success' }}
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           toolchain: nightly
 
       - name: Build nightly
         id: build-nightly
-        # if: ${{ steps.build-beta.outcome == 'success' }}
+        if: ${{ steps.build-beta.outcome == 'success' }}
         run: ${{ matrix.platform.command }} +nightly build --target ${{ matrix.platform.target }};
         continue-on-error: true
 
       - name: Test nightly
         id: test-nightly
-        # if: ${{ steps.build-nightly.outcome == 'success' }}
+        if: ${{ steps.build-nightly.outcome == 'success' }}
         run: ${{ matrix.platform.command }} +nightly test --target ${{ matrix.platform.target }};
         continue-on-error: true
 
@@ -128,9 +126,6 @@ jobs:
 
               body = body.concat(`🚨 ❌ Test Failures on **${failed_toolchain}** Rust with **${{ matrix.platform.target }}** target.`)
             }
-
-            console.log(beta_build_fail)
-            console.log(body)
 
             github.rest.issues.createComment({
               owner: context.repo.owner,
