@@ -34,10 +34,6 @@ jobs:
           - nightly
           - beta
 
-    env:
-      BuildExitCode: 0
-      TestExitCode: 0
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -65,22 +61,29 @@ jobs:
           fi
 
       - name: Build
+        id: build
         run: |
           ${{ matrix.platform.command }} build --target ${{ matrix.platform.target }}
-          echo "exit_code=$?" >> $BuildExitCode
+          echo "EXIT_CODE=$?" >> "$GITHUB_OUTPUT"
         continue-on-error: ${{ matrix.rust != 'stable' }}
 
       - name: Test
+        id: test
         run: |
           ${{ matrix.platform.command }} test --target ${{ matrix.platform.target }}
-          echo "exit_code=$?" >> $TestExitCode
+          echo "EXIT_CODE=$?" >> "$GITHUB_OUTPUT"
         continue-on-error: ${{ matrix.rust != 'stable' }}
 
       - name: Issue warnings for Beta or Nightly build fails
-        if: env.BuildExitCode != 0 && matrix.rust != 'stable'
+        env:
+          BUILD_RESULT: ${{ steps.build.outputs.EXIT_CODE }}
         uses: actions/github-script@v7
         with:
           script: |
+            const { BUILD_RESULT } = process.env
+            if (BUILD_RESULT == 0) {
+              return;
+            }
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -89,10 +92,15 @@ jobs:
             })
 
       - name: Issue warnings for Beta or Nightly test fails
-        if: env.TestExitCode != 0 && matrix.rust != 'stable'
+        env:
+          TEST_RESULT: ${{ steps.test.outputs.EXIT_CODE }}
         uses: actions/github-script@v7
         with:
           script: |
+            const { TEST_RESULT } = process.env
+            if (TEST_RESULT == 0) {
+              return;
+            }
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
