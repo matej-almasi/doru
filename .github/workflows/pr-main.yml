@@ -65,6 +65,7 @@ jobs:
         run: |
           ${{ matrix.platform.command }} build --target ${{ matrix.platform.target }}
           echo "EXIT_CODE=$?" >> "$GITHUB_OUTPUT"
+          echo "EXIT_CODE=$?"
         continue-on-error: ${{ matrix.rust != 'stable' }}
 
       - name: Test
@@ -72,9 +73,10 @@ jobs:
         run: |
           ${{ matrix.platform.command }} test --target ${{ matrix.platform.target }}
           echo "EXIT_CODE=$?" >> "$GITHUB_OUTPUT"
+          echo "EXIT_CODE=$?"
         continue-on-error: ${{ matrix.rust != 'stable' }}
 
-      - name: Issue warnings for Beta or Nightly build fails
+      - name: Issue warnings for ${{ matrix.rust }} build fails
         env:
           BUILD_RESULT: ${{ steps.build.outputs.EXIT_CODE }}
         uses: actions/github-script@v7
@@ -91,7 +93,7 @@ jobs:
               body: `🚨 🛠️ Build Failures on **${{ matrix.rust }}** Rust with **${{ matrix.platform.target }}** target.`
             })
 
-      - name: Issue warnings for Beta or Nightly test fails
+      - name: Issue warnings for ${{ matrix.rust }} test fails
         env:
           TEST_RESULT: ${{ steps.test.outputs.EXIT_CODE }}
         uses: actions/github-script@v7
