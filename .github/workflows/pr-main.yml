@@ -64,16 +64,16 @@ jobs:
         id: build
         run: |
           ${{ matrix.platform.command }} build --target ${{ matrix.platform.target }}
-          echo "EXIT_CODE=$?" >> "$GITHUB_OUTPUT"
           echo "EXIT_CODE=$?"
+          echo "EXIT_CODE=$?" >> "$GITHUB_OUTPUT"
         continue-on-error: ${{ matrix.rust != 'stable' }}
 
       - name: Test
         id: test
         run: |
           ${{ matrix.platform.command }} test --target ${{ matrix.platform.target }}
-          echo "EXIT_CODE=$?" >> "$GITHUB_OUTPUT"
           echo "EXIT_CODE=$?"
+          echo "EXIT_CODE=$?" >> "$GITHUB_OUTPUT"
         continue-on-error: ${{ matrix.rust != 'stable' }}
 
       - name: Issue warnings for ${{ matrix.rust }} build fails
