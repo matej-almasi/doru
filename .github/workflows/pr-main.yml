@@ -63,29 +63,21 @@ jobs:
       - name: Build
         id: build
         run: |
-          set +e
           ${{ matrix.platform.command }} build --target ${{ matrix.platform.target }};
-          echo "EXIT_CODE=$?" >> "$GITHUB_OUTPUT"
         continue-on-error: ${{ matrix.rust != 'stable' }}
 
       - name: Test
         id: test
+        if: ${{ steps.build.outcome == 'success'}}
         run: |
-          set +e
           ${{ matrix.platform.command }} test --target ${{ matrix.platform.target }};
-          echo "EXIT_CODE=$?" >> "$GITHUB_OUTPUT"
         continue-on-error: ${{ matrix.rust != 'stable' }}
 
       - name: Issue warnings for ${{ matrix.rust }} build fails
-        env:
-          BUILD_RESULT: ${{ steps.build.outputs.EXIT_CODE }}
+        if: ${{ steps.build.outcome == 'failure'}}
         uses: actions/github-script@v7
         with:
           script: |
-            const BUILD_RESULT = '${{ steps.build.outputs.EXIT_CODE }}'
-            if (BUILD_RESULT == 0) {
-              return;
-            }
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -94,13 +86,10 @@ jobs:
             })
 
       - name: Issue warnings for ${{ matrix.rust }} test fails
+        if: ${{ steps.test.outcome == 'failure' }}
         uses: actions/github-script@v7
         with:
           script: |
-            const { TEST_RESULT } = '${{ steps.test.outputs.EXIT_CODE }}'
-            if (TEST_RESULT == 0) {
-              return;
-            }
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
