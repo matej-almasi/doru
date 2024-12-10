@@ -2,6 +2,14 @@ name: PR Validation
 
 on:
   pull_request:
+    branches:
+      - main
+    paths:
+      - "src"
+      - "Cargo*"
+      - ".cargo"
+      # - ".github/workflows/pr-main.yml"
+      - "rustfmt.toml"
   push:
     branches:
       - main
